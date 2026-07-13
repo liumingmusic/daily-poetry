@@ -258,7 +258,8 @@ body {
   letter-spacing: 0.1em;
 }
 .poem-extra .extra-block + .extra-block { margin-top: 14px; }
-.poem-extra p { margin: 0; font-size: 15px; color: var(--ink-soft); line-height: 1.85; }
+.poem-extra p { margin: 0; font-size: 15px; color: var(--ink-soft); line-height: 1.85; text-align: justify; }
+.poem-extra #today-trans { color: var(--ink); background: var(--paper-2); border-radius: 8px; padding: 10px 12px; }
 
 .today-hint {
   text-align: center;
