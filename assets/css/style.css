@@ -1,0 +1,394 @@
+/* ===== 每日诗词 · 古典浅色主题 ===== */
+:root {
+  --paper: #f5f0e6;        /* 宣纸米白 */
+  --paper-2: #efe7d6;      /* 略深米色，用于卡片底 */
+  --ink: #2b2620;           /* 墨色正文 */
+  --ink-soft: #5b5347;      /* 次级文字 */
+  --ink-faint: #8a8170;     /* 弱文字 */
+  --line: #ddd2bd;          /* 分隔线 */
+  --accent: #9a3b2e;       /* 印泥红（章、强调） */
+  --accent-soft: #c0584a;
+  --seal: #b23a2e;          /* 印章红 */
+  --gold: #b08d4f;          /* 描金 */
+  --shadow: 0 6px 24px rgba(43, 38, 32, 0.08);
+  --radius: 14px;
+  --serif: "Noto Serif SC", "Songti SC", "STSong", "SimSun", "Source Han Serif SC", "Georgia", serif;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;       /* 手机端杜绝横向溢出 */
+}
+
+body {
+  font-family: var(--serif);
+  color: var(--ink);
+  background-color: var(--paper);
+  /* 宣纸纹理：极淡的斜向渐变 + 噪点感 */
+  background-image:
+    radial-gradient(rgba(176, 141, 79, 0.05) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(255,255,255,0.4), rgba(221, 210, 189, 0.15));
+  background-size: 22px 22px, 100% 100%;
+  background-attachment: fixed;
+  line-height: 1.9;
+  font-size: 17px;
+  -webkit-text-size-adjust: 100%;
+  min-height: 100vh;
+}
+
+/* ===== 顶栏 ===== */
+.site-header {
+  text-align: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 26px) 16px 14px;
+  position: relative;
+}
+.brand { display: inline-flex; align-items: center; gap: 12px; justify-content: center; }
+.brand-seal {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  background: var(--seal); color: #fff;
+  border-radius: 8px;
+  font-size: 24px; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(178, 58, 46, 0.35);
+  transform: rotate(-3deg);
+}
+.brand-title {
+  margin: 0;
+  font-size: clamp(28px, 7vw, 40px);
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  color: var(--ink);
+  text-indent: 0.22em;
+}
+.brand-sub {
+  margin: 6px 0 0;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.date-bar {
+  margin-top: 14px;
+  display: flex; gap: 14px; justify-content: center; align-items: center;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.solar-date { font-weight: 600; letter-spacing: 0.05em; }
+.lunar-date { color: var(--accent); }
+.weekday::before { content: "· "; color: var(--line); }
+
+/* ===== 主导航 ===== */
+.main-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  padding: 8px 10px;
+  background: rgba(245, 240, 230, 0.86);
+  backdrop-filter: saturate(140%) blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--ink-soft);
+  padding: 9px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: 44px;
+  transition: all 0.18s ease;
+}
+.nav-btn:hover { color: var(--ink); background: rgba(176,141,79,0.10); }
+.nav-btn.active {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.nav-btn .badge {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 5px;
+  margin-left: 4px;
+  font-size: 12px;
+  line-height: 18px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.25);
+}
+.nav-btn.active .badge { background: rgba(255,255,255,0.3); }
+
+/* ===== 容器与视图 ===== */
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px calc(env(safe-area-inset-bottom, 0px) + 40px);
+}
+.view { display: none; animation: fade 0.3s ease; }
+.view.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.view-title {
+  font-size: 22px; letter-spacing: 0.12em; margin: 4px 0 18px;
+  color: var(--ink);
+  border-left: 4px solid var(--accent);
+  padding-left: 12px;
+}
+
+/* ===== 今日诗词卡片 ===== */
+.poem-card {
+  position: relative;
+  background: linear-gradient(180deg, #fbf7ee, var(--paper-2));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 34px 28px 26px;
+  overflow: hidden;
+}
+/* 水墨边框装饰 */
+.poem-card::before {
+  content: "";
+  position: absolute; inset: 8px;
+  border: 1px solid rgba(176,141,79,0.28);
+  border-radius: 10px;
+  pointer-events: none;
+}
+.seal-corner {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--seal); color: #fff;
+  font-size: 20px; font-weight: 700;
+  border-radius: 6px;
+  transform: rotate(4deg);
+  box-shadow: 0 2px 6px rgba(178,58,46,0.3);
+}
+.poem-head { text-align: center; margin-bottom: 22px; }
+.poem-title {
+  margin: 0;
+  font-size: clamp(26px, 6vw, 34px);
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: var(--ink);
+}
+.poem-meta {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+/* 正文：默认竖排（古典韵味），桌面优先 */
+.poem-content {
+  text-align: center;
+  font-size: clamp(18px, 4.6vw, 22px);
+  line-height: 2.0;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  margin: 8px auto 20px;
+  max-width: 760px;
+}
+.poem-content.vertical {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  max-height: 420px;
+  margin: 8px auto 20px;
+  padding: 4px 6px;
+  column-gap: 14px;
+}
+.poem-content.horizontal > .line {
+  display: block;
+  margin: 4px 0;
+}
+.poem-content .line { white-space: pre-wrap; }
+.poem-content .punc { color: var(--ink-faint); }
+
+.poem-tags {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  margin-bottom: 18px;
+}
+.poem-tags .tag {
+  font-size: 13px;
+  color: var(--gold);
+  border: 1px solid rgba(176,141,79,0.4);
+  border-radius: 999px;
+  padding: 3px 12px;
+  background: rgba(176,141,79,0.08);
+}
+
+/* 操作按钮 */
+.poem-actions {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+  margin-top: 8px;
+}
+.act-btn {
+  appearance: none;
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 18px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.act-btn:hover { border-color: var(--accent); color: var(--accent); }
+.act-btn:active { transform: translateY(1px); }
+.act-btn.ghost { background: transparent; color: var(--ink-soft); }
+.act-btn.faved { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.poem-extra {
+  margin-top: 20px;
+  border-top: 1px dashed var(--line);
+  padding-top: 16px;
+}
+.poem-extra .extra-block h3 {
+  margin: 0 0 6px;
+  font-size: 16px; color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.poem-extra .extra-block + .extra-block { margin-top: 14px; }
+.poem-extra p { margin: 0; font-size: 15px; color: var(--ink-soft); line-height: 1.85; }
+
+.today-hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin: 16px auto 0;
+  max-width: 520px;
+}
+
+/* ===== 诗库检索 ===== */
+.library-bar {
+  display: flex; flex-direction: column; gap: 14px;
+  margin-bottom: 18px;
+}
+.dynasty-tabs {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+}
+.tab {
+  appearance: none;
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--ink-soft);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 16px;
+  min-height: 40px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.tab:hover { border-color: var(--accent-soft); }
+.tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+.search-box { display: flex; justify-content: center; }
+.search-box input {
+  width: 100%;
+  max-width: 460px;
+  font-family: var(--serif);
+  font-size: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fffdf8;
+  color: var(--ink);
+  outline: none;
+  min-height: 44px;
+}
+.search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(154,59,46,0.12); }
+
+.result-count { text-align: center; color: var(--ink-faint); font-size: 14px; margin: 4px 0 16px; }
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.poem-item {
+  background: linear-gradient(180deg, #fbf7ee, var(--paper-2));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.poem-item:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.poem-item .pi-title { font-size: 19px; font-weight: 700; letter-spacing: 0.06em; }
+.poem-item .pi-meta { font-size: 13px; color: var(--accent); }
+.poem-item .pi-content {
+  font-size: 14px; color: var(--ink-soft); line-height: 1.7;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.poem-item .pi-fav {
+  align-self: flex-end;
+  font-size: 18px; color: var(--gold);
+  background: transparent; border: none; cursor: pointer; padding: 2px 4px;
+}
+
+.empty-tip { text-align: center; color: var(--ink-faint); margin-top: 30px; }
+
+/* ===== 页脚 ===== */
+.site-footer {
+  text-align: center;
+  padding: 24px 16px calc(env(safe-area-inset-bottom, 0px) + 20px);
+  color: var(--ink-faint);
+  font-size: 13px;
+  border-top: 1px solid var(--line);
+}
+.footer-sub { font-size: 12px; margin: 4px 0 0; }
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 30px);
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(43,38,32,0.92);
+  color: #fff;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 99;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.hidden { display: none !important; }
+
+/* ===== 响应式：桌面优先，手机端适配 ===== */
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .container { padding: 18px 12px calc(env(safe-area-inset-bottom,0px) + 36px); }
+  .poem-card { padding: 28px 18px 22px; }
+  /* 手机端竖排极易溢出，回退为横排、逐句清晰 */
+  .poem-content.vertical {
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    max-height: none;
+    column-gap: 0;
+    text-align: center;
+  }
+  .poem-content.horizontal { text-align: center; }
+  .poem-content .line { display: block; margin: 6px 0; }
+  .results-grid { grid-template-columns: 1fr; }
+  .act-btn, .nav-btn, .tab { font-size: 15px; }
+  .brand-title { letter-spacing: 0.16em; }
+}
+
+@media (max-width: 420px) {
+  .poem-content { font-size: 19px; line-height: 2.0; }
+  .nav-btn { padding: 9px 11px; font-size: 15px; }
+}
