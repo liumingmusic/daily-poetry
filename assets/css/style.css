@@ -285,6 +285,114 @@ body {
 /* 适用场景标签行 */
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
+/* ===== 英译 English ===== */
+#today-en[lang="en"] {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.9;
+  letter-spacing: .01em;
+}
+
+/* ===== 化用 · 典故来源 ===== */
+.allu-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.allu-list li { border-left: 3px solid var(--gold); padding: 2px 0 2px 12px; }
+.allu-phrase { font-size: 15px; color: var(--ink); font-weight: 600; line-height: 1.7; }
+.allu-explain { font-size: 14px; color: var(--ink-soft); line-height: 1.8; margin-top: 3px; }
+
+/* ===== 历代评价 ===== */
+.crit-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.crit-list li {
+  background: #fbf6ea;
+  border: 1px solid #ece0c6;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.crit-source {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 8px;
+}
+.crit-source::before { content: "【"; }
+.crit-source::after { content: "】"; }
+.crit-comment { font-size: 14px; color: var(--ink-soft); line-height: 1.85; }
+
+/* ===== 词牌详解卡片（今日面板内） ===== */
+.cipai-card {
+  background: linear-gradient(180deg, #fbf6ea 0%, #f7efdd 100%);
+  border: 1px solid #e7dcc0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.cipai-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+.cipai-name {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .04em;
+}
+.cipai-row { display: flex; gap: 8px; line-height: 1.8; padding: 3px 0; }
+.cipai-row + .cipai-row { border-top: 1px dashed #e3d7bd; }
+.cipai-key {
+  flex: 0 0 44px;
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.cipai-val { flex: 1; font-size: 14px; color: var(--ink-soft); }
+
+/* ===== 词牌分类视图 ===== */
+.cipai-toolbar { display: flex; justify-content: center; margin-bottom: 20px; }
+.cipai-tabs { display: flex; gap: 8px; }
+.cipai-group { margin-bottom: 26px; }
+.cipai-group-head {
+  display: flex; align-items: baseline; gap: 12px;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 8px; margin-bottom: 14px;
+}
+.cipai-group-name {
+  font-family: var(--serif);
+  font-size: 20px; font-weight: 700; color: var(--ink);
+  letter-spacing: .06em;
+}
+.cipai-group-sub { font-size: 13px; color: var(--ink-faint); flex: 1; }
+.cipai-group-count { font-size: 13px; color: var(--accent); font-weight: 600; }
+.cipai-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.cipai-mini {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.cipai-mini:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(43,38,32,.12); }
+.cipai-mini-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; }
+.cipai-mini-name {
+  font-family: var(--serif);
+  font-size: 18px; font-weight: 700; color: var(--accent);
+  letter-spacing: .04em; margin-right: 2px;
+}
+.cipai-used {
+  font-size: 12px; color: var(--ink-faint);
+  background: #f3ece0; border-radius: 999px; padding: 2px 8px;
+}
+.cipai-mini-row { font-size: 13px; color: var(--ink-soft); line-height: 1.8; padding: 3px 0; }
+.cipai-mini-row + .cipai-mini-row { border-top: 1px dashed #eee3cc; }
+.cipai-mini-row b {
+  color: var(--accent); font-weight: 700; margin-right: 6px; font-size: 12px;
+}
+
+/* 朗读中按钮状态 */
+.act-btn.reading { background: var(--accent); color: #fff; border-color: var(--accent); }
+
 .today-hint {
   text-align: center;
   font-size: 13px;
