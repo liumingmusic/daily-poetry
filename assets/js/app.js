@@ -181,15 +181,18 @@
     renderContent($('#today-content'), poem);
     renderTags($('#today-tags'), poem);
 
-    // 注释 / 赏析
+    // 注释 / 译文 / 赏析
     var extra = $('#today-extra');
     var noteBlock = $('#today-note-block');
+    var transBlock = $('#today-trans-block');
     var apprBlock = $('#today-appr-block');
     if (poem.note) { $('#today-note').textContent = poem.note; noteBlock.classList.remove('hidden'); }
     else { noteBlock.classList.add('hidden'); }
+    if (poem.translation) { $('#today-trans').textContent = poem.translation; transBlock.classList.remove('hidden'); }
+    else { transBlock.classList.add('hidden'); }
     if (poem.appreciation) { $('#today-appr').textContent = poem.appreciation; apprBlock.classList.remove('hidden'); }
     else { apprBlock.classList.add('hidden'); }
-    if (!poem.note && !poem.appreciation) extra.classList.add('hidden');
+    if (!poem.note && !poem.translation && !poem.appreciation) extra.classList.add('hidden');
 
     // 收藏按钮状态
     var favBtn = $('#btn-fav');
