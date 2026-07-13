@@ -18,6 +18,10 @@
 const fs = require('fs');
 const path = require('path');
 
+// 详注模块：note / appreciation / translation 三字段，按 id 合并进 poems.json
+// 详见 scripts/annotations/ 下各朝代文件与 index.js
+const ANN = require('./annotations');
+
 /* ===================== 精选诗词数据集（简体，已校对） ===================== */
 const CURATED = [
   // ----------------------------- 唐 · 李白 -----------------------------
@@ -505,6 +509,7 @@ function normalize(list) {
     const id = (p.id || 'poem-' + out.length).toString();
     if (seen.has(id)) continue;
     seen.add(id);
+    const a = ANN[id] || {};
     out.push({
       id,
       title: p.title,
@@ -512,8 +517,10 @@ function normalize(list) {
       author: p.author || '佚名',
       content: p.content.map((s) => String(s).replace(/\s+$/, '')),
       tags: Array.isArray(p.tags) ? p.tags : [],
-      note: p.note || '',
-      appreciation: p.appreciation || ''
+      // 详注优先级：注解模块 > CURATED 内联 > 空
+      note: a.note || p.note || '',
+      appreciation: a.appreciation || p.appreciation || '',
+      translation: a.translation || ''
     });
   }
   return out;
@@ -525,6 +532,17 @@ function build() {
   // （可选）如需从开源 chinese-poetry 仓库扩充，可在此读取本地数据并 concat 后重新 normalize。
   // 默认使用内置精选，保证离线、确定性、无外部依赖。
 
+  // 详注覆盖检查：提示尚未撰写注释的诗
+  const ANN_REF = require('./annotations');
+  const missing = poems
+    .filter((p) => !(ANN_REF[p.id] && ANN_REF[p.id].note))
+    .map((p) => p.id);
+  if (missing.length) {
+    console.warn('[build] 以下 ' + missing.length + ' 首诗缺少详注（note）：', missing.join(', '));
+  } else {
+    console.log('[build] 详注覆盖：全部 ' + poems.length + ' 首均已含 note / appreciation / translation');
+  }
+
   const dataDir = path.join(__dirname, '..', 'data');
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
@@ -533,9 +551,14 @@ function build() {
 
   // 统计
   const byDynasty = {};
-  for (const p of poems) byDynasty[p.dynasty] = (byDynasty[p.dynasty] || 0) + 1;
+  let withTrans = 0;
+  for (const p of poems) {
+    byDynasty[p.dynasty] = (byDynasty[p.dynasty] || 0) + 1;
+    if (p.translation) withTrans++;
+  }
   console.log('[build] wrote', poems.length, 'poems ->', outFile);
   console.log('[build] by dynasty:', JSON.stringify(byDynasty));
+  console.log('[build] with translation:', withTrans + '/' + poems.length);
 }
 
 build();
