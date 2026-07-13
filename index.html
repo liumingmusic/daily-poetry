@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 禁缩放 + 适配刘海屏，手机端无横向溢出 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#f5f0e6" />
+  <meta name="description" content="每日诗词 —— 纯静态、离线可用的中国古诗词每日推荐。每天一首名篇，含朝代、作者、全文、注释与赏析。" />
+  <title>每日诗词 · 一日一诗</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <!-- 顶部：站点标题 + 日期 + 农历 -->
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-seal" aria-hidden="true">詩</span>
+      <h1 class="brand-title">每日诗词</h1>
+    </div>
+    <p class="brand-sub">一日一诗 ·  offline &amp; calm</p>
+    <div class="date-bar" id="date-bar">
+      <span id="solar-date" class="solar-date">——</span>
+      <span id="lunar-date" class="lunar-date">农历 ——</span>
+      <span id="weekday" class="weekday"></span>
+    </div>
+  </header>
+
+  <!-- 主导航 -->
+  <nav class="main-nav" aria-label="主导航">
+    <button class="nav-btn active" data-view="today">今日</button>
+    <button class="nav-btn" data-view="library">诗库</button>
+    <button class="nav-btn" data-view="favorites">收藏 <span class="badge" id="fav-count">0</span></button>
+    <button class="nav-btn" data-view="history">历史</button>
+  </nav>
+
+  <main class="container">
+
+    <!-- 视图：今日诗词 -->
+    <section class="view view-today active" id="view-today">
+      <article class="poem-card today-card" id="today-card">
+        <div class="seal-corner" id="card-seal" aria-hidden="true">诗</div>
+        <div class="poem-head">
+          <h2 class="poem-title" id="today-title">载入中…</h2>
+          <p class="poem-meta"><span id="today-dynasty">—</span> · <span id="today-author">—</span></p>
+        </div>
+        <div class="poem-content vertical" id="today-content"></div>
+        <div class="poem-tags" id="today-tags"></div>
+
+        <div class="poem-actions">
+          <button class="act-btn" id="btn-change" title="换一首随机诗词">换一首</button>
+          <button class="act-btn" id="btn-fav" title="收藏 / 取消收藏">☆ 收藏</button>
+          <button class="act-btn" id="btn-copy" title="复制全文">复制</button>
+          <button class="act-btn" id="btn-share" title="分享">分享</button>
+          <button class="act-btn ghost" id="btn-note" title="注释 / 赏析">注 · 赏</button>
+        </div>
+
+        <div class="poem-extra hidden" id="today-extra">
+          <div class="extra-block" id="today-note-block">
+            <h3>注释</h3>
+            <p id="today-note"></p>
+          </div>
+          <div class="extra-block" id="today-appr-block">
+            <h3>赏析</h3>
+            <p id="today-appr"></p>
+          </div>
+        </div>
+      </article>
+      <p class="today-hint">同一天，所有人看到同一首；次日自动换新。点「换一首」可随机浏览。</p>
+    </section>
+
+    <!-- 视图：诗库（检索） -->
+    <section class="view view-library" id="view-library">
+      <div class="library-bar">
+        <div class="dynasty-tabs" id="dynasty-tabs">
+          <button class="tab active" data-dynasty="全部">全部</button>
+          <button class="tab" data-dynasty="唐">唐</button>
+          <button class="tab" data-dynasty="宋">宋</button>
+          <button class="tab" data-dynasty="诗经">诗经</button>
+          <button class="tab" data-dynasty="元">元</button>
+          <button class="tab" data-dynasty="其他">其他</button>
+        </div>
+        <div class="search-box">
+          <input type="search" id="search-input" placeholder="搜标题 / 作者 / 正文 / 标签…" autocomplete="off" />
+        </div>
+      </div>
+      <p class="result-count" id="result-count"></p>
+      <div class="results-grid" id="results-grid"></div>
+    </section>
+
+    <!-- 视图：收藏 -->
+    <section class="view view-favorites" id="view-favorites">
+      <h2 class="view-title">我的收藏</h2>
+      <div class="results-grid" id="favorites-grid"></div>
+      <p class="empty-tip hidden" id="fav-empty">还没有收藏，去「今日」或「诗库」里点 ☆ 吧。</p>
+    </section>
+
+    <!-- 视图：历史回看 -->
+    <section class="view view-history" id="view-history">
+      <h2 class="view-title">历史回看</h2>
+      <p class="result-count">按日期确定性选诗，可回看往日「今日诗词」。</p>
+      <div class="results-grid" id="history-grid"></div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>每日诗词 · 内置 <span id="total-count">—</span> 首离线诗词 · 无需联网 · 无 API key</p>
+    <p class="footer-sub">数据精选自历代名篇，仅供学习与赏析。</p>
+  </footer>
+
+  <!-- 轻提示 -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
