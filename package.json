@@ -1,0 +1,22 @@
+{
+  "name": "daily-poetry",
+  "version": "1.0.0",
+  "description": "每日诗词 - 纯静态、离线可用的中国古诗词每日推荐网站（零构建，原生 HTML/CSS/JS）",
+  "type": "commonjs",
+  "scripts": {
+    "build:data": "node scripts/build-dataset.js",
+    "pick": "node scripts/pick-today.js"
+  },
+  "keywords": [
+    "古诗词",
+    "每日诗词",
+    "chinese-poetry",
+    "static-site",
+    "github-pages"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liumingmusic/daily-poetry.git"
+  }
+}
