@@ -172,6 +172,14 @@
     });
   }
 
+  // 生成一枚小标签（用于体裁/主旨/适用场景）
+  function makeChip(text, cls) {
+    var span = document.createElement('span');
+    span.className = 'chip ' + (cls || '');
+    span.textContent = text;
+    return span;
+  }
+
   function renderPoem(poem) {
     current = poem;
     isTodayMode = false;
@@ -181,18 +189,55 @@
     renderContent($('#today-content'), poem);
     renderTags($('#today-tags'), poem);
 
-    // 注释 / 译文 / 赏析
+    // 多维解读：体裁 / 主旨 / 背景 / 译文 / 注释 / 赏析 / 意境 / 名句 / 场景 / 用法
     var extra = $('#today-extra');
-    var noteBlock = $('#today-note-block');
-    var transBlock = $('#today-trans-block');
-    var apprBlock = $('#today-appr-block');
-    if (poem.note) { $('#today-note').textContent = poem.note; noteBlock.classList.remove('hidden'); }
-    else { noteBlock.classList.add('hidden'); }
-    if (poem.translation) { $('#today-trans').textContent = poem.translation; transBlock.classList.remove('hidden'); }
-    else { transBlock.classList.add('hidden'); }
-    if (poem.appreciation) { $('#today-appr').textContent = poem.appreciation; apprBlock.classList.remove('hidden'); }
-    else { apprBlock.classList.add('hidden'); }
-    if (!poem.note && !poem.translation && !poem.appreciation) extra.classList.add('hidden');
+    function show(blockId, on) { var b = $('#' + blockId); if (b) (on ? b.classList.remove('hidden') : b.classList.add('hidden')); }
+
+    // 顶部元信息：体裁 + 主旨
+    var meta = $('#today-extra-meta');
+    meta.innerHTML = '';
+    if (poem.form) meta.appendChild(makeChip(poem.form, 'chip-form'));
+    if (poem.theme) meta.appendChild(makeChip(poem.theme, 'chip-theme'));
+    show('today-extra-meta', !!(poem.form || poem.theme));
+
+    if (poem.background) { $('#today-bg').textContent = poem.background; show('today-bg-block', true); } else show('today-bg-block', false);
+    if (poem.translation) { $('#today-trans').textContent = poem.translation; show('today-trans-block', true); } else show('today-trans-block', false);
+    if (poem.note) { $('#today-note').textContent = poem.note; show('today-note-block', true); } else show('today-note-block', false);
+    if (poem.appreciation) { $('#today-appr').textContent = poem.appreciation; show('today-appr-block', true); } else show('today-appr-block', false);
+    if (poem.mood) { $('#today-mood').textContent = poem.mood; show('today-mood-block', true); } else show('today-mood-block', false);
+
+    // 名句赏析（列表）
+    var famList = $('#today-fam');
+    famList.innerHTML = '';
+    if (poem.famousLines && poem.famousLines.length) {
+      poem.famousLines.forEach(function (f) {
+        if (!f || !f.line) return;
+        var li = document.createElement('li');
+        var line = document.createElement('div');
+        line.className = 'fam-line';
+        line.textContent = f.line;
+        var c = document.createElement('div');
+        c.className = 'fam-comment';
+        c.textContent = f.comment || '';
+        li.appendChild(line); li.appendChild(c);
+        famList.appendChild(li);
+      });
+      show('today-fam-block', true);
+    } else show('today-fam-block', false);
+
+    // 适用场景（标签）
+    var useRow = $('#today-use');
+    useRow.innerHTML = '';
+    if (poem.usage && poem.usage.length) {
+      poem.usage.forEach(function (u) { if (u) useRow.appendChild(makeChip(u, 'chip-use')); });
+      show('today-use-block', true);
+    } else show('today-use-block', false);
+
+    if (poem.howToUse) { $('#today-how').textContent = poem.howToUse; show('today-how-block', true); } else show('today-how-block', false);
+
+    if (!poem.background && !poem.translation && !poem.note && !poem.appreciation &&
+        !poem.mood && !poem.howToUse && !(poem.famousLines && poem.famousLines.length) &&
+        !(poem.usage && poem.usage.length)) extra.classList.add('hidden');
 
     // 收藏按钮状态
     var favBtn = $('#btn-fav');
