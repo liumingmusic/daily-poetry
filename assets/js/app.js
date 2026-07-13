@@ -131,6 +131,8 @@
   var current = null;       // 当前展示的诗
   var isTodayMode = true;   // 是否为「今日」确定性诗
   var libFilter = { dynasty: '全部', q: '' };
+  var CIPAI = null;         // data/cipai.json 缓存
+  var cipaiMode = 'length'; // 词牌视图分组方式：length | tone
 
   function getFavs() {
     try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); }
@@ -181,6 +183,10 @@
   }
 
   function renderPoem(poem) {
+    // 切换诗词时停止正在进行的朗读
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    var readBtn0 = $('#btn-read');
+    if (readBtn0) { readBtn0.textContent = '🔊 朗读'; readBtn0.classList.remove('reading'); }
     current = poem;
     isTodayMode = false;
     $('#today-title').textContent = poem.title;
@@ -200,10 +206,77 @@
     if (poem.theme) meta.appendChild(makeChip(poem.theme, 'chip-theme'));
     show('today-extra-meta', !!(poem.form || poem.theme));
 
+    // 词牌详解（仅词）
+    var cipaiBox = $('#today-cipai');
+    if (poem.cipai && poem.cipai.name) {
+      cipaiBox.innerHTML = '';
+      var c = poem.cipai;
+      var head = document.createElement('div');
+      head.className = 'cipai-head';
+      head.innerHTML = '<span class="cipai-name">' + escapeHtml(c.name) + '</span>' +
+        '<span class="chip chip-form">' + escapeHtml(c.category || '') + '</span>' +
+        '<span class="chip chip-theme">' + escapeHtml(c.tone || '') + '</span>' +
+        (c.chars ? '<span class="chip chip-use">' + c.chars + '字</span>' : '');
+      cipaiBox.appendChild(head);
+      var rows = [
+        ['别名', c.aka], ['格律', c.rhythm], ['起源', c.origin],
+        ['风格', c.style], ['代表作', c.represent]
+      ];
+      rows.forEach(function (r) {
+        if (!r[1]) return;
+        var dl = document.createElement('div');
+        dl.className = 'cipai-row';
+        dl.innerHTML = '<span class="cipai-key">' + r[0] + '</span><span class="cipai-val">' + escapeHtml(r[1]) + '</span>';
+        cipaiBox.appendChild(dl);
+      });
+      show('today-cipai-block', true);
+    } else show('today-cipai-block', false);
+
     if (poem.background) { $('#today-bg').textContent = poem.background; show('today-bg-block', true); } else show('today-bg-block', false);
     if (poem.translation) { $('#today-trans').textContent = poem.translation; show('today-trans-block', true); } else show('today-trans-block', false);
+    if (poem.enTranslation) { $('#today-en').textContent = poem.enTranslation; show('today-en-block', true); } else show('today-en-block', false);
     if (poem.note) { $('#today-note').textContent = poem.note; show('today-note-block', true); } else show('today-note-block', false);
+
+    // 化用 · 典故来源
+    var alluList = $('#today-allu');
+    alluList.innerHTML = '';
+    if (poem.allusions && poem.allusions.length) {
+      poem.allusions.forEach(function (a) {
+        if (!a || !a.phrase) return;
+        var li = document.createElement('li');
+        var ph = document.createElement('div');
+        ph.className = 'allu-phrase';
+        ph.textContent = a.phrase + (a.source ? '　·　' + a.source : '');
+        var ex = document.createElement('div');
+        ex.className = 'allu-explain';
+        ex.textContent = a.explain || '';
+        li.appendChild(ph); li.appendChild(ex);
+        alluList.appendChild(li);
+      });
+      show('today-allu-block', true);
+    } else show('today-allu-block', false);
+
     if (poem.appreciation) { $('#today-appr').textContent = poem.appreciation; show('today-appr-block', true); } else show('today-appr-block', false);
+
+    // 历代评价
+    var critList = $('#today-crit');
+    critList.innerHTML = '';
+    if (poem.criticism && poem.criticism.length) {
+      poem.criticism.forEach(function (c2) {
+        if (!c2 || !c2.comment) return;
+        var li = document.createElement('li');
+        var src = document.createElement('span');
+        src.className = 'crit-source';
+        src.textContent = c2.source || '评';
+        var cm = document.createElement('span');
+        cm.className = 'crit-comment';
+        cm.textContent = c2.comment;
+        li.appendChild(src); li.appendChild(cm);
+        critList.appendChild(li);
+      });
+      show('today-crit-block', true);
+    } else show('today-crit-block', false);
+
     if (poem.mood) { $('#today-mood').textContent = poem.mood; show('today-mood-block', true); } else show('today-mood-block', false);
 
     // 名句赏析（列表）
@@ -349,6 +422,81 @@
     }
   }
 
+  /* ---------- 词牌分类视图 ---------- */
+  function initCipaiView() {
+    $all('#cipai-tabs .tab').forEach(function (t) {
+      t.addEventListener('click', function () {
+        $all('#cipai-tabs .tab').forEach(function (x) { x.classList.remove('active'); });
+        t.classList.add('active');
+        cipaiMode = t.dataset.mode || 'length';
+        renderCipaiGroups();
+      });
+    });
+  }
+
+  function renderCipai() {
+    var host = $('#cipai-groups');
+    if (CIPAI) { renderCipaiGroups(); return; }
+    host.innerHTML = '<p class="empty-tip">正在载入词牌数据…</p>';
+    fetch('data/cipai.json', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (data) { CIPAI = data; renderCipaiGroups(); })
+      .catch(function (err) {
+        host.innerHTML = '<p class="empty-tip">词牌数据加载失败：' + escapeHtml(err.message) + '</p>';
+      });
+  }
+
+  function renderCipaiGroups() {
+    var host = $('#cipai-groups');
+    if (!CIPAI) return;
+    host.innerHTML = '';
+    var groups = cipaiMode === 'tone' ? CIPAI.classify.byTone : CIPAI.classify.byLength;
+    // 分组顺序
+    var order = cipaiMode === 'tone'
+      ? ['婉约', '豪放', '兼备']
+      : ['小令', '中调', '长调'];
+    var subtitle = cipaiMode === 'tone'
+      ? { '婉约': '声情缠绵、细腻含蓄', '豪放': '气象开阔、慷慨纵横', '兼备': '刚柔并济、亦婉亦豪' }
+      : { '小令': '≤ 58 字，短小精炼', '中调': '59–90 字，舒展有致', '长调': '≥ 91 字，铺陈开阖' };
+    order.forEach(function (gname) {
+      var names = groups[gname] || [];
+      if (!names.length) return;
+      var section = document.createElement('div');
+      section.className = 'cipai-group';
+      var h = document.createElement('div');
+      h.className = 'cipai-group-head';
+      h.innerHTML = '<span class="cipai-group-name">' + escapeHtml(gname) + '</span>' +
+        '<span class="cipai-group-sub">' + escapeHtml(subtitle[gname] || '') + '</span>' +
+        '<span class="cipai-group-count">' + names.length + ' 调</span>';
+      section.appendChild(h);
+      var grid = document.createElement('div');
+      grid.className = 'cipai-grid';
+      names.forEach(function (nm) {
+        var d = CIPAI.dict[nm];
+        if (!d) return;
+        var used = (CIPAI.usedCount && CIPAI.usedCount[nm]) || 0;
+        var card = document.createElement('div');
+        card.className = 'cipai-mini';
+        card.innerHTML =
+          '<div class="cipai-mini-head">' +
+            '<span class="cipai-mini-name">' + escapeHtml(nm) + '</span>' +
+            '<span class="chip chip-form">' + escapeHtml(d.category || '') + '</span>' +
+            '<span class="chip chip-theme">' + escapeHtml(d.tone || '') + '</span>' +
+            (d.chars ? '<span class="chip chip-use">' + d.chars + '字</span>' : '') +
+            (used ? '<span class="cipai-used">本集 ' + used + ' 首</span>' : '') +
+          '</div>' +
+          (d.aka ? '<div class="cipai-mini-row"><b>别名</b>' + escapeHtml(d.aka) + '</div>' : '') +
+          (d.rhythm ? '<div class="cipai-mini-row"><b>格律</b>' + escapeHtml(d.rhythm) + '</div>' : '') +
+          (d.origin ? '<div class="cipai-mini-row"><b>起源</b>' + escapeHtml(d.origin) + '</div>' : '') +
+          (d.style ? '<div class="cipai-mini-row"><b>声情</b>' + escapeHtml(d.style) + '</div>' : '') +
+          (d.represent ? '<div class="cipai-mini-row"><b>代表作</b>' + escapeHtml(d.represent) + '</div>' : '');
+        grid.appendChild(card);
+      });
+      section.appendChild(grid);
+      host.appendChild(section);
+    });
+  }
+
   /* ---------- 视图切换 ---------- */
   function switchView(name) {
     $all('.nav-btn').forEach(function (b) { b.classList.toggle('active', b.dataset.view === name); });
@@ -357,6 +505,7 @@
     if (name === 'favorites') renderFavorites();
     if (name === 'history') renderHistory();
     if (name === 'library') renderLibrary();
+    if (name === 'cipai') renderCipai();
     if (name === 'today' && isTodayMode === false) {
       // 回到今日：恢复确定性今日诗
       // 不强制重置，仅保证按钮高亮；用户点「今日」想看今天
@@ -403,6 +552,54 @@
       isTodayMode = false;
       renderPoem(POEMS[r]);
     });
+
+    // 朗读（浏览器语音合成 Web Speech API）
+    var readBtn = $('#btn-read');
+    if (readBtn) {
+      if (!('speechSynthesis' in window)) {
+        readBtn.disabled = true;
+        readBtn.title = '当前浏览器不支持语音合成';
+      }
+      readBtn.addEventListener('click', function () {
+        if (!('speechSynthesis' in window) || !current) return;
+        var synth = window.speechSynthesis;
+        // 再次点击 = 停止
+        if (synth.speaking || synth.pending) {
+          synth.cancel();
+          readBtn.textContent = '🔊 朗读';
+          readBtn.classList.remove('reading');
+          return;
+        }
+        var text = (current.title || '') + '。' +
+          (current.dynasty || '') + '，' + (current.author || '佚名') + '。' +
+          (current.content || []).join('，');
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = 'zh-CN';
+        u.rate = 0.85;   // 稍慢，适合吟诵
+        u.pitch = 1;
+        // 尽量挑选中文嗓音
+        var voices = synth.getVoices();
+        var zh = voices.filter(function (v) { return /zh|Chinese|中文|普通话/i.test(v.lang + ' ' + v.name); });
+        if (zh.length) u.voice = zh[0];
+        u.onend = function () { readBtn.textContent = '🔊 朗读'; readBtn.classList.remove('reading'); };
+        u.onerror = function () { readBtn.textContent = '🔊 朗读'; readBtn.classList.remove('reading'); };
+        readBtn.textContent = '■ 停止';
+        readBtn.classList.add('reading');
+        synth.speak(u);
+      });
+      // 某些浏览器需异步加载语音表
+      if ('speechSynthesis' in window && typeof window.speechSynthesis.onvoiceschanged !== 'undefined') {
+        window.speechSynthesis.onvoiceschanged = function () {};
+      }
+    }
+
+    // 切走页面 / 切换诗时停止朗读
+    window.addEventListener('beforeunload', function () {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    });
+
+    // 词牌分类视图
+    initCipaiView();
 
     // 收藏
     $('#btn-fav').addEventListener('click', function () {
