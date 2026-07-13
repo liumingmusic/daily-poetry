@@ -1,0 +1,16 @@
+# 依赖与构建产物
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# 本地临时文件
+tmp/
+*.tmp
