@@ -261,6 +261,30 @@ body {
 .poem-extra p { margin: 0; font-size: 15px; color: var(--ink-soft); line-height: 1.85; text-align: justify; }
 .poem-extra #today-trans { color: var(--ink); background: var(--paper-2); border-radius: 8px; padding: 10px 12px; }
 
+/* 顶部元信息：体裁 + 主旨 */
+.poem-extra .extra-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip {
+  display: inline-block;
+  font-size: 13px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  background: var(--paper-2);
+}
+.chip-form { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.chip-theme { border-color: #b89b5e; color: #9a7b3c; }
+.chip-use { background: #fbf6ea; border-color: #e7dcc0; }
+
+/* 名句赏析列表 */
+.fam-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.fam-list li { border-left: 3px solid var(--accent); padding: 2px 0 2px 12px; }
+.fam-line { font-size: 15px; color: var(--ink); font-weight: 600; line-height: 1.7; }
+.fam-comment { font-size: 14px; color: var(--ink-soft); line-height: 1.8; margin-top: 3px; }
+
+/* 适用场景标签行 */
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
 .today-hint {
   text-align: center;
   font-size: 13px;
