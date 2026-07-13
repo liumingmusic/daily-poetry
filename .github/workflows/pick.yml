@@ -1,0 +1,36 @@
+name: 每日诗词快照
+
+on:
+  schedule:
+    - cron: '0 22 * * *'   # 每天 UTC 22:00（北京次日 06:00）
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出
+        uses: actions/checkout@v4
+
+      - name: 设置 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 生成今日快照
+        run: node scripts/pick-today.js
+
+      - name: 若变化则提交
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [[ -n "$(git status --porcelain data/manifest.json)" ]]; then
+            git add data/manifest.json
+            git commit -m "chore: 每日诗词快照 $(date +%Y-%m-%d)"
+            git push
+          else
+            echo "manifest 无变化，跳过提交"
+          fi
