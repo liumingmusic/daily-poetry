@@ -517,10 +517,19 @@ function normalize(list) {
       author: p.author || '佚名',
       content: p.content.map((s) => String(s).replace(/\s+$/, '')),
       tags: Array.isArray(p.tags) ? p.tags : [],
+      // 体裁（新增，可空）
+      form: a.form || p.form || '',
       // 详注优先级：注解模块 > CURATED 内联 > 空
       note: a.note || p.note || '',
       appreciation: a.appreciation || p.appreciation || '',
-      translation: a.translation || ''
+      translation: a.translation || '',
+      // 多维解读（新增）
+      background: a.background || p.background || '',
+      theme: a.theme || p.theme || (Array.isArray(p.tags) && p.tags[0]) || '',
+      mood: a.mood || '',
+      famousLines: Array.isArray(a.famousLines) ? a.famousLines : [],
+      usage: Array.isArray(a.usage) ? a.usage : [],
+      howToUse: a.howToUse || ''
     });
   }
   return out;
@@ -532,15 +541,23 @@ function build() {
   // （可选）如需从开源 chinese-poetry 仓库扩充，可在此读取本地数据并 concat 后重新 normalize。
   // 默认使用内置精选，保证离线、确定性、无外部依赖。
 
-  // 详注覆盖检查：提示尚未撰写注释的诗
+  // 多维解读覆盖检查：提示尚未撰写必要解读字段的诗
   const ANN_REF = require('./annotations');
+  const required = ['note', 'appreciation', 'translation', 'background', 'mood', 'howToUse'];
   const missing = poems
-    .filter((p) => !(ANN_REF[p.id] && ANN_REF[p.id].note))
+    .filter((p) => {
+      const a = ANN_REF[p.id] || {};
+      const has = (k) => (a[k] || p[k] || '') !== '';
+      const arr = (k) => Array.isArray(a[k]) && a[k].length > 0;
+      const missField = required.some((k) => !has(k));
+      const missArr = !arr('famousLines') || !arr('usage');
+      return missField || missArr;
+    })
     .map((p) => p.id);
   if (missing.length) {
-    console.warn('[build] 以下 ' + missing.length + ' 首诗缺少详注（note）：', missing.join(', '));
+    console.warn('[build] 以下 ' + missing.length + ' 首诗缺少必要解读字段：', missing.join(', '));
   } else {
-    console.log('[build] 详注覆盖：全部 ' + poems.length + ' 首均已含 note / appreciation / translation');
+    console.log('[build] 多维解读覆盖：全部 ' + poems.length + ' 首均已含 注/译/赏/背景/意境/使用方式/名句/场景');
   }
 
   const dataDir = path.join(__dirname, '..', 'data');
@@ -551,14 +568,24 @@ function build() {
 
   // 统计
   const byDynasty = {};
-  let withTrans = 0;
+  let withTrans = 0, withBg = 0, withMood = 0, withHow = 0, withFam = 0, withUse = 0;
   for (const p of poems) {
     byDynasty[p.dynasty] = (byDynasty[p.dynasty] || 0) + 1;
     if (p.translation) withTrans++;
+    if (p.background) withBg++;
+    if (p.mood) withMood++;
+    if (p.howToUse) withHow++;
+    if (p.famousLines && p.famousLines.length) withFam++;
+    if (p.usage && p.usage.length) withUse++;
   }
   console.log('[build] wrote', poems.length, 'poems ->', outFile);
   console.log('[build] by dynasty:', JSON.stringify(byDynasty));
-  console.log('[build] with translation:', withTrans + '/' + poems.length);
+  console.log('[build] translation:', withTrans + '/' + poems.length,
+              '| background:', withBg + '/' + poems.length,
+              '| mood:', withMood + '/' + poems.length,
+              '| howToUse:', withHow + '/' + poems.length,
+              '| famousLines:', withFam + '/' + poems.length,
+              '| usage:', withUse + '/' + poems.length);
 }
 
 build();
