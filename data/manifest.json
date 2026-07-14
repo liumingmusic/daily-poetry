@@ -1,12 +1,13 @@
 {
-  "date": "20260713",
-  "isoDate": "2026-07-13",
-  "index": 76,
-  "total": 147,
+  "date": "20260714",
+  "isoDate": "2026-07-14",
+  "index": 37,
+  "total": 169,
   "poem": {
-    "id": "tang-mengjiao-001",
-    "title": "游子吟",
+    "id": "tang-menghaoran-004",
+    "title": "望洞庭湖赠张丞相",
     "dynasty": "唐",
-    "author": "孟郊"
+    "author": "孟浩然",
+    "type": "poem"
   }
 }
