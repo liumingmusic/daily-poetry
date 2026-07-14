@@ -525,3 +525,84 @@ body {
   .poem-content { font-size: 19px; line-height: 2.0; }
   .nav-btn { padding: 9px 11px; font-size: 15px; }
 }
+
+/* ===== 散文段落渲染 ===== */
+.poem-content.prose .prose-p {
+  display: block;
+  text-indent: 2em;
+  margin: 4px 0;
+  line-height: 2.05;
+  text-align: justify;
+}
+
+/* ===== 作者链接（诗词卡内） ===== */
+.author-link { cursor: default; transition: color .15s ease; }
+.author-link.has-author { cursor: pointer; color: var(--accent); border-bottom: 1px dashed var(--accent-soft); }
+.author-link.has-author:hover { color: var(--accent-soft); }
+
+/* ===== 诗库筛选（学段/朝代/类型） ===== */
+.library-bar { gap: 10px; }
+.filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.filter-label { font-size: 13px; color: var(--ink-faint); flex: 0 0 auto; min-width: 30px; }
+.stage-tabs .tab.active { background: var(--gold); border-color: var(--gold); color: #fff; }
+.type-tabs .tab.active { background: var(--accent-soft); border-color: var(--accent-soft); color: #fff; }
+#type-tabs, #stage-tabs { flex-wrap: wrap; }
+
+/* ===== 诗库卡片：类型/学段 徽标 ===== */
+.poem-item .pi-meta { color: var(--ink-faint); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.poem-item .pi-type {
+  font-size: 11px; padding: 1px 7px; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--ink-soft); font-weight: 600;
+}
+.poem-item .pi-type.type-prose { background: #f3ece0; border-color: #e0d3b8; color: #9a7b3c; }
+.poem-item .pi-type.type-poem { background: #fbf6ea; border-color: #ece0c6; color: var(--accent); }
+.poem-item .pi-author.link { color: var(--accent); cursor: pointer; border-bottom: 1px dashed var(--accent-soft); }
+.poem-item .pi-author.link:hover { color: var(--accent-soft); }
+.poem-item .pi-stage { font-size: 11px; color: var(--ink-faint); border: 1px solid var(--line); padding: 1px 7px; border-radius: 999px; }
+
+/* ===== 作者视图 ===== */
+.author-index { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.author-chip {
+  font-family: var(--serif); font-size: 15px; color: var(--ink-soft);
+  background: #fff; border: 1px solid var(--line); border-radius: 999px;
+  padding: 8px 15px; cursor: pointer; transition: all .15s ease;
+}
+.author-chip:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+.author-chip-count { font-size: 12px; color: var(--ink-faint); margin-left: 4px; }
+
+.author-detail { margin-top: 14px; }
+.author-back {
+  appearance: none; font-family: var(--serif); font-size: 14px; color: var(--accent);
+  background: transparent; border: 1px solid var(--line); border-radius: 999px;
+  padding: 7px 16px; cursor: pointer; margin-bottom: 16px;
+}
+.author-back:hover { border-color: var(--accent); }
+.author-card {
+  background: linear-gradient(180deg, #fbf6ea, var(--paper-2));
+  border: 1px solid #e7dcc0; border-radius: 16px; padding: 24px 26px;
+  display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;
+}
+.author-seal {
+  flex: 0 0 auto; width: 64px; height: 64px; border-radius: 12px;
+  background: var(--seal); color: #fdf6ec; font-family: var(--serif);
+  font-size: 34px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(178,58,46,.28);
+}
+.author-head { margin-bottom: 8px; }
+.author-head h3 { font-family: var(--serif); font-size: 26px; color: var(--ink); margin: 0; letter-spacing: .08em; }
+.author-alias { font-size: 14px; color: var(--accent); margin-top: 4px; }
+.author-meta { font-size: 13px; color: var(--ink-faint); margin: 3px 0; }
+.author-meta span { display: inline-block; color: var(--accent); font-weight: 600; margin-right: 6px; }
+.author-bio { font-size: 15px; color: var(--ink-soft); line-height: 1.95; margin-top: 8px; flex: 1 1 320px; }
+.author-rep { font-size: 14px; color: var(--ink-soft); margin-top: 10px; }
+.author-rep b, .author-eval b { color: var(--accent); font-weight: 700; margin-right: 6px; }
+.author-eval { font-size: 14px; color: var(--ink-soft); line-height: 1.9; margin-top: 8px; font-style: italic; }
+.author-works-title { font-family: var(--serif); font-size: 17px; font-weight: 700; color: var(--ink); margin: 18px 0 10px; letter-spacing: .04em; }
+.author-works { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.author-work {
+  background: #fff; border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px; cursor: pointer; transition: all .15s ease;
+}
+.author-work:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: var(--shadow); }
+.aw-title { font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--accent); }
+.aw-content { font-size: 13px; color: var(--ink-faint); line-height: 1.7; margin-top: 4px; }
