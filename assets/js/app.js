@@ -245,7 +245,7 @@
     if (poem.background) { $('#today-bg').textContent = poem.background; show('today-bg-block', true); } else show('today-bg-block', false);
     if (poem.translation) { $('#today-trans').textContent = poem.translation; show('today-trans-block', true); } else show('today-trans-block', false);
     if (poem.enTranslation) { $('#today-en').textContent = poem.enTranslation; show('today-en-block', true); } else show('today-en-block', false);
-    if (poem.note) { $('#today-note').textContent = poem.note; show('today-note-block', true); } else show('today-note-block', false);
+    if (poem.note) { $('#today-note').innerHTML = renderNoteHtml(poem.note); show('today-note-block', true); } else show('today-note-block', false);
 
     // 化用 · 典故来源
     var alluList = $('#today-allu');
@@ -385,6 +385,63 @@
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
+  }
+
+  /* 注释解析：把整段 note 拆成逐条换行的结构化 HTML
+     - 诗词格式：【词】释义【词】释义…
+     - 散文格式：一、重点字词：词，释义；词，释义。二、典故与背景：…段落… */
+  function renderNoteHtml(note) {
+    if (!note) return '';
+    var text = String(note).trim();
+
+    // 诗词模式：含【】
+    if (text.indexOf('【') >= 0) {
+      var items = [];
+      var re = /【([^】]+)】([^【]*)/g, m;
+      while ((m = re.exec(text)) !== null) {
+        var term = m[1].trim();
+        var def = m[2].trim().replace(/[，。；、]+$/, '');
+        if (term) items.push('<div class="note-item"><span class="note-term">' + escapeHtml(term) + '</span><span class="note-def">' + escapeHtml(def) + '</span></div>');
+      }
+      if (items.length) return '<div class="note-list">' + items.join('') + '</div>';
+    }
+
+    // 散文模式：按中文序号标题分组（一、二、三…）
+    var groups = [];
+    var parts = text.split(/(?=[一二三四五六七八九十]+、)/).filter(function (s) { return s.trim(); });
+    if (parts.length > 1 || /^[一二三四五六七八九十]+、/.test(text)) {
+      parts.forEach(function (part) {
+        part = part.trim();
+        var titleMatch = part.match(/^([一二三四五六七八九十]+、[^：:]+)[：:]([\s\S]*)$/);
+        var title = '', body = part;
+        if (titleMatch) { title = titleMatch[1].replace(/^[一二三四五六七八九十]+、/, '').trim(); body = titleMatch[2].trim(); }
+        // 字词类：含多个分号 -> 拆条
+        if ((body.match(/；/g) || []).length >= 1 && /[，,].+/.test(body)) {
+          var terms = body.split(/；/).map(function (s) { return s.trim().replace(/[。；]+$/, ''); }).filter(Boolean);
+          var lis = terms.map(function (t) {
+            var idx = t.search(/[，,]/);
+            if (idx > 0 && idx <= 6) {
+              return '<div class="note-item"><span class="note-term">' + escapeHtml(t.slice(0, idx)) + '</span><span class="note-def">' + escapeHtml(t.slice(idx + 1)) + '</span></div>';
+            }
+            return '<div class="note-item"><span class="note-def">' + escapeHtml(t) + '</span></div>';
+          }).join('');
+          groups.push((title ? '<div class="note-group-title">' + escapeHtml(title) + '</div>' : '') + '<div class="note-list">' + lis + '</div>');
+        } else {
+          // 段落类：整段文字
+          groups.push((title ? '<div class="note-group-title">' + escapeHtml(title) + '</div>' : '') + '<p class="note-para">' + escapeHtml(body) + '</p>');
+        }
+      });
+      if (groups.length) return groups.join('');
+    }
+
+    // 兜底：按分号/句号拆行
+    var lines = text.split(/[；]/).map(function (s) { return s.trim(); }).filter(Boolean);
+    if (lines.length > 1) {
+      return '<div class="note-list">' + lines.map(function (l) {
+        return '<div class="note-item"><span class="note-def">' + escapeHtml(l) + '</span></div>';
+      }).join('') + '</div>';
+    }
+    return '<p class="note-para">' + escapeHtml(text) + '</p>';
   }
 
   function renderLibrary() {
@@ -559,26 +616,94 @@
     if (!AUTHORS || !AUTHORS[name]) { host.classList.add('hidden'); return; }
     var d = AUTHORS[name];
     var works = POEMS.filter(function (p) { return p.author === name; });
+
+    // === 作品列表 HTML ===
     var worksHtml = works.map(function (p) {
       var t = (p.content || []).join('').slice(0, 22);
       return '<div class="author-work" data-id="' + escapeHtml(p.id) + '">' +
         '<div class="aw-title">' + escapeHtml(p.title) + '</div>' +
         '<div class="aw-content">' + escapeHtml(t) + (t.length >= 22 ? '…' : '') + '</div></div>';
     }).join('');
+
+    // === 身份标签 pills ===
+    var tagsHtml = '';
+    if (d.identity && d.identity.length) {
+      tagsHtml = '<div class="author-tags">' +
+        d.identity.map(function(t){ return '<span class="author-tag">' + escapeHtml(t) + '</span>'; }).join('') +
+        '</div>';
+    }
+
+    // === 代表作（可点击跳转）===
+    var repHtml = '';
+    if (d.rep && d.rep.length) {
+      repHtml = '<div class="author-section"><h4 class="author-section-title">📚 代表作</h4>' +
+        '<div class="author-rep-list">' +
+        d.rep.map(function(r) { return '<span class="author-rep-item">' + escapeHtml(r) + '</span>'; }).join('') +
+        '</div></div>';
+    }
+
+    // === 生平时间线 ===
+    var timelineHtml = '';
+    if (d.timeline && d.timeline.length) {
+      timelineHtml = '<div class="author-section"><h4 class="author-section-title">🕰 生平年表</h4>' +
+        '<ul class="author-timeline">' +
+        d.timeline.map(function(t) {
+          if (!t || !t.event) return '';
+          return '<li class="tl-item">' +
+            '<span class="tl-year">' + escapeHtml(t.year || '') + '</span>' +
+            '<span class="tl-dot"></span>' +
+            '<span class="tl-event">' + escapeHtml(t.event) + '</span>' +
+          '</li>';
+        }).join('') +
+        '</ul></div>';
+    }
+
+    // === 组装档案卡片（PC 两栏 / 移动单栏）===
     host.innerHTML =
       '<button class="author-back" id="author-back">← 返回作者列表</button>' +
-      '<div class="author-card">' +
-        '<div class="author-seal">' + escapeHtml(name.slice(0, 1)) + '</div>' +
-        '<div class="author-head"><h3>' + escapeHtml(name) + '</h3>' +
-          (d.alias ? '<div class="author-alias">' + escapeHtml(d.alias) + '</div>' : '') + '</div>' +
-        (d.life ? '<div class="author-meta"><span>生卒</span>' + escapeHtml(d.life) + '</div>' : '') +
-        (d.birthplace ? '<div class="author-meta"><span>籍贯</span>' + escapeHtml(d.birthplace) + '</div>' : '') +
-        (d.bio ? '<div class="author-bio">' + escapeHtml(d.bio) + '</div>' : '') +
-        (d.style ? '<div class="author-style"><b>风格</b>' + escapeHtml(d.style) + '</div>' : '') +
-        (d.rep && d.rep.length ? '<div class="author-rep"><b>代表作</b>' + d.rep.map(function (r) { return escapeHtml(r); }).join('、') + '</div>' : '') +
-        (d.eval ? '<div class="author-eval"><b>历代评价</b>' + escapeHtml(d.eval) + '</div>' : '') +
-        (works.length ? '<div class="author-works-title">本集作品（' + works.length + '）</div><div class="author-works">' + worksHtml + '</div>' : '') +
+      '<div class="author-profile">' +
+
+        /* ── 头部：印章+姓名+朝代+标签（跨栏）── */
+        '<div class="profile-header">' +
+          '<div class="author-seal">' + escapeHtml(name.slice(0, 1)) + '</div>' +
+          '<div class="profile-name-block">' +
+            '<div class="profile-name-row">' +
+              '<h3 class="profile-name">' + escapeHtml(name) + '</h3>' +
+              (d.dynasty ? '<span class="profile-dynasty">' + escapeHtml(d.dynasty) + '</span>' : '') +
+            '</div>' +
+            (d.alias ? '<div class="profile-alias">' + escapeHtml(d.alias) + '</div>' : '') +
+            tagsHtml +
+          '</div>' +
+        '</div>' +
+
+        /* ── 两栏主体 ── */
+        '<div class="profile-body">' +
+
+          /* 左栏：基本信息 + 代表作 + 本集作品 */
+          '<aside class="profile-aside">' +
+            '<div class="profile-info-grid">' +
+              (d.life ? '<div class="profile-info-item"><span class="pi-label">生卒</span><span class="pi-value">' + escapeHtml(d.life) + '</span></div>' : '') +
+              (d.birthplace ? '<div class="profile-info-item"><span class="pi-label">籍贯</span><span class="pi-value">' + escapeHtml(d.birthplace) + '</span></div>' : '') +
+              (d.alias ? '<div class="profile-info-item"><span class="pi-label">字号</span><span class="pi-value">' + escapeHtml(d.alias.replace(/，.*$/,'')) + '</span></div>' : '') +
+            '</div>' +
+            repHtml +
+            (works.length ? '<div class="author-section"><h4 class="author-section-title">📋 本集收录（' + works.length + '篇）</h4><div class="author-works">' + worksHtml + '</div></div>' : '') +
+          '</aside>' +
+
+          /* 右栏：生平叙述 + 年表 + 经历 + 风格 + 评价 + 影响 */
+          '<div class="profile-main">' +
+            (d.bio ? '<div class="author-section"><h4 class="author-section-title">📖 生平简介</h4><div class="author-section-body">' + escapeHtml(d.bio) + '</div></div>' : '') +
+            timelineHtml +
+            (d.career ? '<div class="author-section"><h4 class="author-section-title">🎯 经历</h4><div class="author-section-body">' + escapeHtml(d.career) + '</div></div>' : '') +
+            (d.style ? '<div class="author-section"><h4 class="author-section-title">✍️ 风格与成就</h4><div class="author-section-body">' + escapeHtml(d.style) + '</div></div>' : '') +
+            (d.eval ? '<div class="author-section author-section--quote"><h4 class="author-section-title">💬 历代评价</h4><div class="author-eval-text">"' + escapeHtml(d.eval) + '"</div></div>' : '') +
+            (d.influence ? '<div class="author-section"><h4 class="author-section-title">🔥 后世影响</h4><div class="author-section-body">' + escapeHtml(d.influence) + '</div></div>' : '') +
+          '</div>' +
+
+        '</div>' +
+
       '</div>';
+
     host.classList.remove('hidden');
     // 返回
     var back = $('#author-back');
