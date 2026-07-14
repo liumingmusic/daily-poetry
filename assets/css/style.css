@@ -594,6 +594,8 @@ body {
 .author-meta { font-size: 13px; color: var(--ink-faint); margin: 3px 0; }
 .author-meta span { display: inline-block; color: var(--accent); font-weight: 600; margin-right: 6px; }
 .author-bio { font-size: 15px; color: var(--ink-soft); line-height: 1.95; margin-top: 8px; flex: 1 1 320px; }
+.author-style { font-size: 14px; color: var(--ink-soft); line-height: 1.9; margin-top: 8px; }
+.author-style b { color: var(--accent); font-weight: 700; margin-right: 6px; }
 .author-rep { font-size: 14px; color: var(--ink-soft); margin-top: 10px; }
 .author-rep b, .author-eval b { color: var(--accent); font-weight: 700; margin-right: 6px; }
 .author-eval { font-size: 14px; color: var(--ink-soft); line-height: 1.9; margin-top: 8px; font-style: italic; }
