@@ -130,9 +130,11 @@
   var FAV_KEY = 'dp_favs_v1';
   var current = null;       // 当前展示的诗
   var isTodayMode = true;   // 是否为「今日」确定性诗
-  var libFilter = { dynasty: '全部', q: '' };
+  var libFilter = { dynasty: '全部', q: '', stage: '全部', type: '全部' };
   var CIPAI = null;         // data/cipai.json 缓存
   var cipaiMode = 'length'; // 词牌视图分组方式：length | tone
+  var AUTHORS = null;       // data/authors.json 缓存
+  var currentAuthor = null;  // 当前作者视图的作者名
 
   function getFavs() {
     try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); }
@@ -156,9 +158,12 @@
   /* ---------- 渲染：单首诗内容 ---------- */
   function renderContent(target, poem) {
     target.innerHTML = '';
+    var isProse = (poem.type || 'poem') === 'prose';
+    target.classList.toggle('vertical', !isProse);
+    target.classList.toggle('prose', isProse);
     (poem.content || []).forEach(function (line) {
       var div = document.createElement('div');
-      div.className = 'line';
+      div.className = isProse ? 'prose-p' : 'line';
       div.textContent = line;
       target.appendChild(div);
     });
@@ -191,7 +196,12 @@
     isTodayMode = false;
     $('#today-title').textContent = poem.title;
     $('#today-dynasty').textContent = poem.dynasty || '';
-    $('#today-author').textContent = poem.author || '佚名';
+    var authEl = $('#today-author');
+    authEl.textContent = poem.author || '佚名';
+    authEl.classList.toggle('has-author', !!(AUTHORS && AUTHORS[poem.author]));
+    authEl.onclick = function () {
+      if (AUTHORS && AUTHORS[poem.author]) openAuthor(poem.author);
+    };
     renderContent($('#today-content'), poem);
     renderTags($('#today-tags'), poem);
 
@@ -339,11 +349,26 @@
     var item = document.createElement('div');
     item.className = 'poem-item';
     var fav = isFaved(poem.id);
+    var type = poem.type || 'poem';
+    var typeLabel = type === 'prose' ? '散文' : '诗词';
+    var stageLabel = type === 'prose' ? '散文' : (poem.stage || '其他');
+    var authorHas = !!(AUTHORS && AUTHORS[poem.author]);
+    var meta =
+      '<span class="pi-type type-' + type + '">' + typeLabel + '</span>' +
+      escapeHtml(poem.dynasty || '') + ' · ' +
+      '<span class="pi-author' + (authorHas ? ' link' : '') + '"' + (authorHas ? ' data-author="' + escapeHtml(poem.author) + '"' : '') + '>' + escapeHtml(poem.author || '佚名') + '</span>' +
+      ' · <span class="pi-stage">' + stageLabel + '</span>';
     item.innerHTML =
       '<div class="pi-title">' + escapeHtml(poem.title) + '</div>' +
-      '<div class="pi-meta">' + escapeHtml(poem.dynasty || '') + ' · ' + escapeHtml(poem.author || '佚名') + '</div>' +
+      '<div class="pi-meta">' + meta + '</div>' +
       '<div class="pi-content">' + escapeHtml((poem.content || []).join('')) + '</div>' +
       '<button class="pi-fav" title="收藏/取消">' + (fav ? '★' : '☆') + '</button>';
+    // 作者可点 -> 作者视图
+    var authSpan = item.querySelector('.pi-author.link');
+    if (authSpan) authSpan.addEventListener('click', function (e) {
+      e.stopPropagation();
+      openAuthor(authSpan.dataset.author);
+    });
     item.addEventListener('click', function (e) {
       if (e.target.classList.contains('pi-fav')) {
         e.stopPropagation();
@@ -368,13 +393,15 @@
     var q = libFilter.q.trim().toLowerCase();
     var list = POEMS.filter(function (p) {
       if (libFilter.dynasty !== '全部' && p.dynasty !== libFilter.dynasty) return false;
+      if (libFilter.stage !== '全部' && (p.stage || '其他') !== libFilter.stage) return false;
+      if (libFilter.type !== '全部' && (p.type || 'poem') !== libFilter.type) return false;
       if (q) {
-        var hay = (p.title + ' ' + p.author + ' ' + (p.content || []).join('') + ' ' + (p.tags || []).join(' ')).toLowerCase();
+        var hay = (p.title + ' ' + p.author + ' ' + (p.content || []).join('') + ' ' + (p.tags || []).join(' ') + ' ' + (AUTHORS && AUTHORS[p.author] ? AUTHORS[p.author].alias : '')).toLowerCase();
         if (hay.indexOf(q) < 0) return false;
       }
       return true;
     });
-    $('#result-count').textContent = '共 ' + list.length + ' 首';
+    $('#result-count').textContent = '共 ' + list.length + ' 首/篇';
     if (!list.length) {
       grid.innerHTML = '<p class="empty-tip">没有匹配的诗词，换个关键词试试。</p>';
       return;
@@ -497,6 +524,77 @@
     });
   }
 
+  /* ---------- 作者视图 ---------- */
+  function openAuthor(name) {
+    switchView('authors');
+    loadAuthors(function () { renderAuthorDetail(name); });
+  }
+
+  function loadAuthors(cb) {
+    if (AUTHORS) { cb(); return; }
+    fetch('data/authors.json', { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (data) { AUTHORS = data; cb(); })
+      .catch(function (err) { console.error('authors load fail', err); });
+  }
+
+  function renderAuthorIndex() {
+    var host = $('#author-index');
+    if (!AUTHORS) { host.innerHTML = '<p class="empty-tip">正在载入作者…</p>'; return; }
+    host.innerHTML = '';
+    Object.keys(AUTHORS).sort(function (a, b) { return AUTHORS[b].count - AUTHORS[a].count; })
+      .forEach(function (name) {
+        var d = AUTHORS[name];
+        var chip = document.createElement('button');
+        chip.className = 'author-chip';
+        chip.innerHTML = escapeHtml(name) + ' <span class="author-chip-count">' + d.count + '</span>';
+        chip.addEventListener('click', function () { renderAuthorDetail(name); });
+        host.appendChild(chip);
+      });
+  }
+
+  function renderAuthorDetail(name) {
+    $('#author-index') && $('#author-index').classList.add('hidden');
+    var host = $('#author-detail');
+    if (!AUTHORS || !AUTHORS[name]) { host.classList.add('hidden'); return; }
+    var d = AUTHORS[name];
+    var works = POEMS.filter(function (p) { return p.author === name; });
+    var worksHtml = works.map(function (p) {
+      var t = (p.content || []).join('').slice(0, 22);
+      return '<div class="author-work" data-id="' + escapeHtml(p.id) + '">' +
+        '<div class="aw-title">' + escapeHtml(p.title) + '</div>' +
+        '<div class="aw-content">' + escapeHtml(t) + (t.length >= 22 ? '…' : '') + '</div></div>';
+    }).join('');
+    host.innerHTML =
+      '<button class="author-back" id="author-back">← 返回作者列表</button>' +
+      '<div class="author-card">' +
+        '<div class="author-seal">' + escapeHtml(name.slice(0, 1)) + '</div>' +
+        '<div class="author-head"><h3>' + escapeHtml(name) + '</h3>' +
+          (d.alias ? '<div class="author-alias">' + escapeHtml(d.alias) + '</div>' : '') + '</div>' +
+        (d.life ? '<div class="author-meta"><span>生卒</span>' + escapeHtml(d.life) + '</div>' : '') +
+        (d.birthplace ? '<div class="author-meta"><span>籍贯</span>' + escapeHtml(d.birthplace) + '</div>' : '') +
+        (d.style ? '<div class="author-bio">' + escapeHtml(d.style) + '</div>' : '') +
+        (d.rep && d.rep.length ? '<div class="author-rep"><b>代表作</b>' + d.rep.map(function (r) { return escapeHtml(r); }).join('、') + '</div>' : '') +
+        (d.eval ? '<div class="author-eval"><b>历代评价</b>' + escapeHtml(d.eval) + '</div>' : '') +
+        (works.length ? '<div class="author-works-title">本集作品（' + works.length + '）</div><div class="author-works">' + worksHtml + '</div>' : '') +
+      '</div>';
+    host.classList.remove('hidden');
+    // 返回
+    var back = $('#author-back');
+    if (back) back.addEventListener('click', function () {
+      host.classList.add('hidden');
+      $('#author-index').classList.remove('hidden');
+    });
+    // 作品点击 -> 打开详情
+    $all('#author-detail .author-work').forEach(function (w) {
+      w.addEventListener('click', function () {
+        var id = w.dataset.id;
+        var poem = POEMS.filter(function (p) { return p.id === id; })[0];
+        if (poem) { switchView('today'); renderPoem(poem); }
+      });
+    });
+  }
+
   /* ---------- 视图切换 ---------- */
   function switchView(name) {
     $all('.nav-btn').forEach(function (b) { b.classList.toggle('active', b.dataset.view === name); });
@@ -506,6 +604,11 @@
     if (name === 'history') renderHistory();
     if (name === 'library') renderLibrary();
     if (name === 'cipai') renderCipai();
+    if (name === 'authors') {
+      $('#author-detail').classList.add('hidden');
+      $('#author-index').classList.remove('hidden');
+      loadAuthors(renderAuthorIndex);
+    }
     if (name === 'today' && isTodayMode === false) {
       // 回到今日：恢复确定性今日诗
       // 不强制重置，仅保证按钮高亮；用户点「今日」想看今天
@@ -642,6 +745,26 @@
         $all('#dynasty-tabs .tab').forEach(function (x) { x.classList.remove('active'); });
         t.classList.add('active');
         libFilter.dynasty = t.dataset.dynasty;
+        renderLibrary();
+      });
+    });
+
+    // 学段 Tab
+    $all('#stage-tabs .tab').forEach(function (t) {
+      t.addEventListener('click', function () {
+        $all('#stage-tabs .tab').forEach(function (x) { x.classList.remove('active'); });
+        t.classList.add('active');
+        libFilter.stage = t.dataset.stage;
+        renderLibrary();
+      });
+    });
+
+    // 类型 Tab
+    $all('#type-tabs .tab').forEach(function (t) {
+      t.addEventListener('click', function () {
+        $all('#type-tabs .tab').forEach(function (x) { x.classList.remove('active'); });
+        t.classList.add('active');
+        libFilter.type = t.dataset.type;
         renderLibrary();
       });
     });
