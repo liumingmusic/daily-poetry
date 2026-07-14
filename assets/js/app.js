@@ -573,7 +573,8 @@
           (d.alias ? '<div class="author-alias">' + escapeHtml(d.alias) + '</div>' : '') + '</div>' +
         (d.life ? '<div class="author-meta"><span>生卒</span>' + escapeHtml(d.life) + '</div>' : '') +
         (d.birthplace ? '<div class="author-meta"><span>籍贯</span>' + escapeHtml(d.birthplace) + '</div>' : '') +
-        (d.style ? '<div class="author-bio">' + escapeHtml(d.style) + '</div>' : '') +
+        (d.bio ? '<div class="author-bio">' + escapeHtml(d.bio) + '</div>' : '') +
+        (d.style ? '<div class="author-style"><b>风格</b>' + escapeHtml(d.style) + '</div>' : '') +
         (d.rep && d.rep.length ? '<div class="author-rep"><b>代表作</b>' + d.rep.map(function (r) { return escapeHtml(r); }).join('、') + '</div>' : '') +
         (d.eval ? '<div class="author-eval"><b>历代评价</b>' + escapeHtml(d.eval) + '</div>' : '') +
         (works.length ? '<div class="author-works-title">本集作品（' + works.length + '）</div><div class="author-works">' + worksHtml + '</div>' : '') +
