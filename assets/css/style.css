@@ -7,6 +7,7 @@
   --ink-faint: #8a8170;     /* 弱文字 */
   --line: #ddd2bd;          /* 分隔线 */
   --accent: #9a3b2e;       /* 印泥红（章、强调） */
+  --accent-dark: #7a2e24;   /* 深印红（标签/引用） */
   --accent-soft: #c0584a;
   --seal: #b23a2e;          /* 印章红 */
   --gold: #b08d4f;          /* 描金 */
@@ -260,6 +261,26 @@ body {
 .poem-extra .extra-block + .extra-block { margin-top: 14px; }
 .poem-extra p { margin: 0; font-size: 15px; color: var(--ink-soft); line-height: 1.85; text-align: justify; }
 .poem-extra #today-trans { color: var(--ink); background: var(--paper-2); border-radius: 8px; padding: 10px 12px; }
+
+/* ===== 注释：逐条换行 ===== */
+.note-list { display: flex; flex-direction: column; gap: 7px; margin: 2px 0; }
+.note-item {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 7px 12px; background: var(--paper-2); border-radius: 8px;
+  border-left: 3px solid var(--gold);
+}
+.note-term {
+  flex: 0 0 auto; min-width: 3.2em;
+  font-family: var(--serif); font-weight: 700; color: var(--accent);
+  font-size: 15px; letter-spacing: .04em;
+}
+.note-def { flex: 1; font-size: 14.5px; color: var(--ink-soft); line-height: 1.75; text-align: justify; }
+.note-group-title {
+  font-family: var(--serif); font-size: 14.5px; font-weight: 700; color: var(--ink);
+  margin: 12px 0 7px; padding-left: 9px; border-left: 3px solid var(--accent);
+}
+.note-group-title:first-child { margin-top: 2px; }
+.note-para { font-size: 14.5px; color: var(--ink-soft); line-height: 1.85; margin: 2px 0 6px; text-align: justify; }
 
 /* 顶部元信息：体裁 + 主旨 */
 .poem-extra .extra-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
@@ -577,34 +598,125 @@ body {
   padding: 7px 16px; cursor: pointer; margin-bottom: 16px;
 }
 .author-back:hover { border-color: var(--accent); }
-.author-card {
+/* ===== 作者档案卡片（多维） ===== */
+.author-profile {
   background: linear-gradient(180deg, #fbf6ea, var(--paper-2));
-  border: 1px solid #e7dcc0; border-radius: 16px; padding: 24px 26px;
-  display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;
+  border: 1px solid #e7dcc0; border-radius: 16px; padding: 28px 30px;
+}
+.profile-header {
+  display: flex; gap: 20px; align-items: flex-start; margin-bottom: 22px;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line);
 }
 .author-seal {
-  flex: 0 0 auto; width: 64px; height: 64px; border-radius: 12px;
+  flex: 0 0 auto; width: 68px; height: 68px; border-radius: 14px;
   background: var(--seal); color: #fdf6ec; font-family: var(--serif);
-  font-size: 34px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  font-size: 36px; font-weight: 700; display: flex; align-items: center; justify-content: center;
   box-shadow: 0 4px 14px rgba(178,58,46,.28);
 }
-.author-head { margin-bottom: 8px; }
-.author-head h3 { font-family: var(--serif); font-size: 26px; color: var(--ink); margin: 0; letter-spacing: .08em; }
-.author-alias { font-size: 14px; color: var(--accent); margin-top: 4px; }
-.author-meta { font-size: 13px; color: var(--ink-faint); margin: 3px 0; }
-.author-meta span { display: inline-block; color: var(--accent); font-weight: 600; margin-right: 6px; }
-.author-bio { font-size: 15px; color: var(--ink-soft); line-height: 1.95; margin-top: 8px; flex: 1 1 320px; }
-.author-style { font-size: 14px; color: var(--ink-soft); line-height: 1.9; margin-top: 8px; }
-.author-style b { color: var(--accent); font-weight: 700; margin-right: 6px; }
-.author-rep { font-size: 14px; color: var(--ink-soft); margin-top: 10px; }
-.author-rep b, .author-eval b { color: var(--accent); font-weight: 700; margin-right: 6px; }
-.author-eval { font-size: 14px; color: var(--ink-soft); line-height: 1.9; margin-top: 8px; font-style: italic; }
-.author-works-title { font-family: var(--serif); font-size: 17px; font-weight: 700; color: var(--ink); margin: 18px 0 10px; letter-spacing: .04em; }
-.author-works { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.profile-name-block { flex: 1; }
+.profile-name-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+.profile-name { font-family: var(--serif); font-size: 28px; color: var(--ink); margin: 0; letter-spacing: .08em; }
+.profile-dynasty {
+  display: inline-block; background: var(--seal); color: #fff;
+  padding: 2px 12px; border-radius: 10px; font-size: 12px; font-weight: 600;
+  letter-spacing: .08em;
+}
+.profile-alias { font-size: 14px; color: var(--accent); margin-top: 5px; }
+/* 身份标签 pills */
+.author-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.author-tag {
+  display: inline-block; background: linear-gradient(135deg, #f5ebe0, #ede3d3);
+  border: 1px solid #e0d2bc; border-radius: 8px;
+  padding: 3px 11px; font-size: 12.5px; color: var(--accent-dark);
+  font-weight: 600; letter-spacing: .03em;
+}
+/* ── 两栏主体（PC）── */
+.profile-body {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.profile-aside { position: sticky; top: 16px; }
+.profile-main { min-width: 0; }
+.profile-main .author-section:first-child { margin-top: 0; }
+
+/* 信息网格：左栏内改为单列纵向 */
+.profile-info-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 10px; margin-bottom: 18px;
+}
+.profile-info-item {
+  background: #fff; border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 14px;
+}
+.pi-label { display: block; font-size: 11px; color: var(--ink-faint); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 3px; }
+.pi-value { font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+
+/* 分区内容 */
+.author-section { margin-top: 16px; }
+.author-section-title {
+  font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--ink);
+  margin: 0 0 8px 0; letter-spacing: .04em;
+}
+.author-section-body {
+  font-size: 15px; color: var(--ink-soft); line-height: 1.95;
+  text-align: justify;
+}
+/* 历代评价引用式 */
+.author-section--quote .author-eval-text {
+  font-size: 15px; color: var(--accent-dark); line-height: 1.9;
+  font-style: italic; padding-left: 16px; border-left: 3px solid var(--accent);
+  background: rgba(178,58,46,.04); padding: 12px 16px; border-radius: 0 8px 8px 0;
+}
+/* 代表作列表 */
+.author-rep-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.author-rep-item {
+  display: inline-block; background: #fff; border: 1px solid var(--line);
+  border-radius: 8px; padding: 5px 13px; font-size: 14px; font-weight: 600;
+  color: var(--accent); cursor: default; transition: all .15s ease;
+}
+.author-rep-item:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(178,58,46,.15); transform: translateY(-1px); }
+
+/* 作品网格（左栏窄，自动单列） */
+.author-works { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 6px; }
 .author-work {
   background: #fff; border: 1px solid var(--line); border-radius: 10px;
-  padding: 12px 14px; cursor: pointer; transition: all .15s ease;
+  padding: 10px 13px; cursor: pointer; transition: all .15s ease;
 }
 .author-work:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: var(--shadow); }
-.aw-title { font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--accent); }
-.aw-content { font-size: 13px; color: var(--ink-faint); line-height: 1.7; margin-top: 4px; }
+.aw-title { font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--accent); }
+.aw-content { font-size: 12.5px; color: var(--ink-faint); line-height: 1.7; margin-top: 4px; }
+
+/* ===== 生平年表（竖向时间线）===== */
+.author-timeline { list-style: none; margin: 4px 0 0; padding: 0; position: relative; }
+.author-timeline::before {
+  content: ""; position: absolute; left: 62px; top: 6px; bottom: 6px;
+  width: 2px; background: linear-gradient(180deg, var(--gold), var(--line));
+}
+.tl-item {
+  position: relative; display: grid;
+  grid-template-columns: 54px 20px 1fr; align-items: baseline;
+  gap: 0; padding: 6px 0;
+}
+.tl-year {
+  font-family: var(--serif); font-size: 13.5px; font-weight: 700;
+  color: var(--accent); text-align: right; padding-right: 6px; white-space: nowrap;
+}
+.tl-dot { position: relative; justify-self: center; }
+.tl-dot::before {
+  content: ""; position: absolute; left: 50%; top: 6px; transform: translateX(-50%);
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--seal); border: 2px solid var(--paper); box-shadow: 0 0 0 1px var(--gold);
+}
+.tl-event { font-size: 14px; color: var(--ink-soft); line-height: 1.7; padding-left: 4px; }
+
+/* ===== 作者档案响应式（置于基础规则之后，确保移动端覆盖生效）===== */
+@media (max-width: 720px) {
+  .profile-body { grid-template-columns: 1fr; gap: 4px; }
+  .profile-aside { position: static; }
+  .profile-info-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .author-profile { padding: 22px 18px; }
+  .author-timeline::before { left: 54px; }
+  .tl-item { grid-template-columns: 48px 18px 1fr; }
+}
