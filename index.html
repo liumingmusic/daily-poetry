@@ -29,6 +29,7 @@
     <button class="nav-btn active" data-view="today">今日</button>
     <button class="nav-btn" data-view="library">诗库</button>
     <button class="nav-btn" data-view="cipai">词牌</button>
+    <button class="nav-btn" data-view="authors">作者</button>
     <button class="nav-btn" data-view="favorites">收藏 <span class="badge" id="fav-count">0</span></button>
     <button class="nav-btn" data-view="history">历史</button>
   </nav>
@@ -41,7 +42,7 @@
         <div class="seal-corner" id="card-seal" aria-hidden="true">诗</div>
         <div class="poem-head">
           <h2 class="poem-title" id="today-title">载入中…</h2>
-          <p class="poem-meta"><span id="today-dynasty">—</span> · <span id="today-author">—</span></p>
+          <p class="poem-meta"><span id="today-dynasty">—</span> · <span class="author-link" id="today-author" title="查看作者生平">—</span></p>
         </div>
         <div class="poem-content vertical" id="today-content"></div>
         <div class="poem-tags" id="today-tags"></div>
@@ -113,13 +114,35 @@
     <!-- 视图：诗库（检索） -->
     <section class="view view-library" id="view-library">
       <div class="library-bar">
-        <div class="dynasty-tabs" id="dynasty-tabs">
-          <button class="tab active" data-dynasty="全部">全部</button>
-          <button class="tab" data-dynasty="唐">唐</button>
-          <button class="tab" data-dynasty="宋">宋</button>
-          <button class="tab" data-dynasty="诗经">诗经</button>
-          <button class="tab" data-dynasty="元">元</button>
-          <button class="tab" data-dynasty="其他">其他</button>
+        <div class="filter-row">
+          <div class="filter-label">学段</div>
+          <div class="stage-tabs" id="stage-tabs">
+            <button class="tab active" data-stage="全部">全部</button>
+            <button class="tab" data-stage="小学">小学</button>
+            <button class="tab" data-stage="初中">初中</button>
+            <button class="tab" data-stage="高中">高中</button>
+            <button class="tab" data-stage="其他">其他</button>
+          </div>
+        </div>
+        <div class="filter-row">
+          <div class="filter-label">朝代</div>
+          <div class="dynasty-tabs" id="dynasty-tabs">
+            <button class="tab active" data-dynasty="全部">全部</button>
+            <button class="tab" data-dynasty="唐">唐</button>
+            <button class="tab" data-dynasty="宋">宋</button>
+            <button class="tab" data-dynasty="诗经">诗经</button>
+            <button class="tab" data-dynasty="元">元</button>
+            <button class="tab" data-dynasty="其他">其他</button>
+            <button class="tab" data-dynasty="明">明</button>
+          </div>
+        </div>
+        <div class="filter-row">
+          <div class="filter-label">类型</div>
+          <div class="type-tabs" id="type-tabs">
+            <button class="tab active" data-type="全部">全部</button>
+            <button class="tab" data-type="poem">诗词</button>
+            <button class="tab" data-type="prose">散文</button>
+          </div>
         </div>
         <div class="search-box">
           <input type="search" id="search-input" placeholder="搜标题 / 作者 / 正文 / 标签…" autocomplete="off" />
@@ -142,6 +165,14 @@
       <div id="cipai-groups"></div>
     </section>
 
+    <!-- 视图：作者生平 -->
+    <section class="view view-authors" id="view-authors">
+      <h2 class="view-title">作者 · 生平</h2>
+      <p class="result-count">点击诗词中的作者名、或下方列表，查看生平、风格与全部作品。</p>
+      <div class="author-index" id="author-index"></div>
+      <div class="author-detail hidden" id="author-detail"></div>
+    </section>
+
     <!-- 视图：收藏 -->
     <section class="view view-favorites" id="view-favorites">
       <h2 class="view-title">我的收藏</h2>
@@ -159,7 +190,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>每日诗词 · 内置 <span id="total-count">—</span> 首离线诗词 · 无需联网 · 无 API key</p>
+    <p>每日诗词 · 内置 <span id="total-count">—</span> 首诗词文赋 · 无需联网 · 无 API key</p>
     <p class="footer-sub">数据精选自历代名篇，仅供学习与赏析。</p>
   </footer>
 
