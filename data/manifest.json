@@ -1,12 +1,12 @@
 {
-  "date": "20260716",
-  "isoDate": "2026-07-16",
-  "index": 50,
+  "date": "20260717",
+  "isoDate": "2026-07-17",
+  "index": 123,
   "total": 169,
   "poem": {
-    "id": "tang-baijuyi-006",
-    "title": "钱塘湖春行",
-    "dynasty": "唐",
-    "author": "白居易"
+    "id": "shijing-001",
+    "title": "关雎",
+    "dynasty": "诗经",
+    "author": "诗经"
   }
 }
