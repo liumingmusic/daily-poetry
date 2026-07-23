@@ -1,12 +1,12 @@
 {
-  "date": "20260722",
-  "isoDate": "2026-07-22",
-  "index": 97,
+  "date": "20260723",
+  "isoDate": "2026-07-23",
+  "index": 138,
   "total": 169,
   "poem": {
-    "id": "song-liqingzhao-004",
-    "title": "醉花阴·薄雾浓云愁永昼",
-    "dynasty": "宋",
-    "author": "李清照"
+    "id": "other-yuefu-002",
+    "title": "长歌行",
+    "dynasty": "其他",
+    "author": "汉乐府"
   }
 }
