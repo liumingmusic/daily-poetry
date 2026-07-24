@@ -1,12 +1,12 @@
 {
-  "date": "20260723",
-  "isoDate": "2026-07-23",
-  "index": 138,
+  "date": "20260724",
+  "isoDate": "2026-07-24",
+  "index": 83,
   "total": 169,
   "poem": {
-    "id": "other-yuefu-002",
-    "title": "长歌行",
-    "dynasty": "其他",
-    "author": "汉乐府"
+    "id": "tang-lishen-001",
+    "title": "悯农",
+    "dynasty": "唐",
+    "author": "李绅"
   }
 }
