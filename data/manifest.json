@@ -1,12 +1,12 @@
 {
-  "date": "20260726",
-  "isoDate": "2026-07-26",
-  "index": 150,
+  "date": "20260727",
+  "isoDate": "2026-07-27",
+  "index": 40,
   "total": 169,
   "poem": {
-    "id": "prose-lanting",
-    "title": "兰亭集序",
-    "dynasty": "其他",
-    "author": "王羲之"
+    "id": "tang-wangchangling-001",
+    "title": "出塞",
+    "dynasty": "唐",
+    "author": "王昌龄"
   }
 }
