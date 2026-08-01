@@ -1,12 +1,12 @@
 {
-  "date": "20260731",
-  "isoDate": "2026-07-31",
-  "index": 115,
+  "date": "20260801",
+  "isoDate": "2026-08-01",
+  "index": 75,
   "total": 169,
   "poem": {
-    "id": "songshi-zhuxi-001",
-    "title": "观书有感",
-    "dynasty": "宋",
-    "author": "朱熹"
+    "id": "tang-lulun-001",
+    "title": "塞下曲",
+    "dynasty": "唐",
+    "author": "卢纶"
   }
 }
