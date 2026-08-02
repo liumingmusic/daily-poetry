@@ -1,12 +1,12 @@
 {
-  "date": "20260801",
-  "isoDate": "2026-08-01",
-  "index": 75,
+  "date": "20260802",
+  "isoDate": "2026-08-02",
+  "index": 30,
   "total": 169,
   "poem": {
-    "id": "tang-lulun-001",
-    "title": "塞下曲",
+    "id": "tang-wangwei-005",
+    "title": "九月九日忆山东兄弟",
     "dynasty": "唐",
-    "author": "卢纶"
+    "author": "王维"
   }
 }
