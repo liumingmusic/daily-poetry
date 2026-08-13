@@ -1,12 +1,12 @@
 {
-  "date": "20260812",
-  "isoDate": "2026-08-12",
-  "index": 45,
+  "date": "20260813",
+  "isoDate": "2026-08-13",
+  "index": 161,
   "total": 169,
   "poem": {
-    "id": "tang-baijuyi-001",
-    "title": "赋得古原草送别",
-    "dynasty": "唐",
-    "author": "白居易"
+    "id": "prose-chibifu",
+    "title": "赤壁赋",
+    "dynasty": "宋",
+    "author": "苏轼"
   }
 }
