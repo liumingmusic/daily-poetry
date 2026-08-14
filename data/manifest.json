@@ -1,12 +1,12 @@
 {
-  "date": "20260813",
-  "isoDate": "2026-08-13",
-  "index": 161,
+  "date": "20260814",
+  "isoDate": "2026-08-14",
+  "index": 144,
   "total": 169,
   "poem": {
-    "id": "prose-chibifu",
-    "title": "赤壁赋",
-    "dynasty": "宋",
-    "author": "苏轼"
+    "id": "other-changlege-001",
+    "title": "敕勒歌",
+    "dynasty": "其他",
+    "author": "北朝民歌"
   }
 }
