@@ -1,12 +1,12 @@
 {
-  "date": "20260831",
-  "isoDate": "2026-08-31",
-  "index": 88,
+  "date": "20260901",
+  "isoDate": "2026-09-01",
+  "index": 44,
   "total": 169,
   "poem": {
-    "id": "song-sushi-002",
-    "title": "念奴娇·赤壁怀古",
-    "dynasty": "宋",
-    "author": "苏轼"
+    "id": "tang-censhen-002",
+    "title": "白雪歌送武判官归京",
+    "dynasty": "唐",
+    "author": "岑参"
   }
 }
