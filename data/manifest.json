@@ -1,12 +1,12 @@
 {
-  "date": "20260901",
-  "isoDate": "2026-09-01",
-  "index": 44,
+  "date": "20260902",
+  "isoDate": "2026-09-02",
+  "index": 73,
   "total": 169,
   "poem": {
-    "id": "tang-censhen-002",
-    "title": "白雪歌送武判官归京",
+    "id": "tang-wanghan-001",
+    "title": "凉州词",
     "dynasty": "唐",
-    "author": "岑参"
+    "author": "王翰"
   }
 }
