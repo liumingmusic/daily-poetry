@@ -1,12 +1,12 @@
 {
-  "date": "20260906",
-  "isoDate": "2026-09-06",
-  "index": 93,
+  "date": "20260907",
+  "isoDate": "2026-09-07",
+  "index": 164,
   "total": 169,
   "poem": {
-    "id": "song-sushi-007",
-    "title": "饮湖上初晴后雨",
-    "dynasty": "宋",
-    "author": "苏轼"
+    "id": "prose-shengyu",
+    "title": "生于忧患，死于安乐",
+    "dynasty": "其他",
+    "author": "孟子"
   }
 }
