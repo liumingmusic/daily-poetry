@@ -1,12 +1,12 @@
 {
-  "date": "20260915",
-  "isoDate": "2026-09-15",
-  "index": 84,
+  "date": "20260917",
+  "isoDate": "2026-09-17",
+  "index": 24,
   "total": 169,
   "poem": {
-    "id": "tang-lishen-002",
-    "title": "悯农",
+    "id": "tang-dufu-010",
+    "title": "登岳阳楼",
     "dynasty": "唐",
-    "author": "李绅"
+    "author": "杜甫"
   }
 }
