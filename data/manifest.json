@@ -1,12 +1,12 @@
 {
-  "date": "20260918",
-  "isoDate": "2026-09-18",
-  "index": 92,
+  "date": "20260919",
+  "isoDate": "2026-09-19",
+  "index": 122,
   "total": 169,
   "poem": {
-    "id": "song-sushi-006",
-    "title": "题西林壁",
-    "dynasty": "宋",
-    "author": "苏轼"
+    "id": "songshi-wangwan-001",
+    "title": "次北固山下",
+    "dynasty": "唐",
+    "author": "王湾"
   }
 }
