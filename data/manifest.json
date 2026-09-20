@@ -1,12 +1,12 @@
 {
-  "date": "20260919",
-  "isoDate": "2026-09-19",
-  "index": 122,
+  "date": "20260920",
+  "isoDate": "2026-09-20",
+  "index": 1,
   "total": 169,
   "poem": {
-    "id": "songshi-wangwan-001",
-    "title": "次北固山下",
+    "id": "tang-libai-002",
+    "title": "早发白帝城",
     "dynasty": "唐",
-    "author": "王湾"
+    "author": "李白"
   }
 }
