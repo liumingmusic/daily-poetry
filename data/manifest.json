@@ -1,12 +1,12 @@
 {
-  "date": "20260920",
-  "isoDate": "2026-09-20",
-  "index": 1,
+  "date": "20260922",
+  "isoDate": "2026-09-22",
+  "index": 102,
   "total": 169,
   "poem": {
-    "id": "tang-libai-002",
-    "title": "早发白帝城",
-    "dynasty": "唐",
-    "author": "李白"
+    "id": "song-xinqiji-004",
+    "title": "西江月·夜行黄沙道中",
+    "dynasty": "宋",
+    "author": "辛弃疾"
   }
 }
