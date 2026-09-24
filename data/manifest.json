@@ -1,12 +1,12 @@
 {
-  "date": "20260922",
-  "isoDate": "2026-09-22",
-  "index": 102,
+  "date": "20260924",
+  "isoDate": "2026-09-24",
+  "index": 158,
   "total": 169,
   "poem": {
-    "id": "song-xinqiji-004",
-    "title": "西江月·夜行黄沙道中",
-    "dynasty": "宋",
-    "author": "辛弃疾"
+    "id": "prose-quanxue",
+    "title": "劝学（节选）",
+    "dynasty": "其他",
+    "author": "荀子"
   }
 }
