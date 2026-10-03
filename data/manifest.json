@@ -1,12 +1,12 @@
 {
-  "date": "20261002",
-  "isoDate": "2026-10-02",
-  "index": 0,
+  "date": "20261003",
+  "isoDate": "2026-10-03",
+  "index": 64,
   "total": 169,
   "poem": {
-    "id": "tang-libai-001",
-    "title": "静夜思",
+    "id": "tang-liuzongyuan-001",
+    "title": "江雪",
     "dynasty": "唐",
-    "author": "李白"
+    "author": "柳宗元"
   }
 }
