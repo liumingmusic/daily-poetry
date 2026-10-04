@@ -1,12 +1,12 @@
 {
-  "date": "20261003",
-  "isoDate": "2026-10-03",
-  "index": 64,
+  "date": "20261004",
+  "isoDate": "2026-10-04",
+  "index": 104,
   "total": 169,
   "poem": {
-    "id": "tang-liuzongyuan-001",
-    "title": "江雪",
-    "dynasty": "唐",
-    "author": "柳宗元"
+    "id": "song-yuefei-001",
+    "title": "满江红·写怀",
+    "dynasty": "宋",
+    "author": "岳飞"
   }
 }
