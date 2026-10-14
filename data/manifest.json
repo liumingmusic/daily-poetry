@@ -1,12 +1,12 @@
 {
-  "date": "20261013",
-  "isoDate": "2026-10-13",
-  "index": 1,
+  "date": "20261014",
+  "isoDate": "2026-10-14",
+  "index": 115,
   "total": 169,
   "poem": {
-    "id": "tang-libai-002",
-    "title": "早发白帝城",
-    "dynasty": "唐",
-    "author": "李白"
+    "id": "songshi-zhuxi-001",
+    "title": "观书有感",
+    "dynasty": "宋",
+    "author": "朱熹"
   }
 }
