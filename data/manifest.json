@@ -1,12 +1,12 @@
 {
-  "date": "20261014",
-  "isoDate": "2026-10-14",
-  "index": 115,
+  "date": "20261015",
+  "isoDate": "2026-10-15",
+  "index": 157,
   "total": 169,
   "poem": {
-    "id": "songshi-zhuxi-001",
-    "title": "观书有感",
-    "dynasty": "宋",
-    "author": "朱熹"
+    "id": "prose-shishuo",
+    "title": "师说",
+    "dynasty": "唐",
+    "author": "韩愈"
   }
 }
