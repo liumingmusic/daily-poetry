@@ -1,12 +1,12 @@
 {
-  "date": "20261015",
-  "isoDate": "2026-10-15",
-  "index": 157,
+  "date": "20261016",
+  "isoDate": "2026-10-16",
+  "index": 10,
   "total": 169,
   "poem": {
-    "id": "prose-shishuo",
-    "title": "师说",
+    "id": "tang-libai-011",
+    "title": "峨眉山月歌",
     "dynasty": "唐",
-    "author": "韩愈"
+    "author": "李白"
   }
 }
