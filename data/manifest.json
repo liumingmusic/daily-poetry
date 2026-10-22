@@ -1,12 +1,12 @@
 {
-  "date": "20261021",
-  "isoDate": "2026-10-21",
-  "index": 161,
+  "date": "20261022",
+  "isoDate": "2026-10-22",
+  "index": 52,
   "total": 169,
   "poem": {
-    "id": "prose-chibifu",
-    "title": "赤壁赋",
-    "dynasty": "宋",
-    "author": "苏轼"
+    "id": "tang-lishangyin-001",
+    "title": "登乐游原",
+    "dynasty": "唐",
+    "author": "李商隐"
   }
 }
