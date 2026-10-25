@@ -1,12 +1,12 @@
 {
-  "date": "20261024",
-  "isoDate": "2026-10-24",
-  "index": 133,
+  "date": "20261025",
+  "isoDate": "2026-10-25",
+  "index": 53,
   "total": 169,
   "poem": {
-    "id": "yuan-mazhiyuan-001",
-    "title": "天净沙·秋思",
-    "dynasty": "元",
-    "author": "马致远"
+    "id": "tang-lishangyin-002",
+    "title": "夜雨寄北",
+    "dynasty": "唐",
+    "author": "李商隐"
   }
 }
