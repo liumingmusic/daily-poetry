@@ -1,12 +1,12 @@
 {
-  "date": "20261103",
-  "isoDate": "2026-11-03",
-  "index": 114,
+  "date": "20261104",
+  "isoDate": "2026-11-04",
+  "index": 128,
   "total": 169,
   "poem": {
-    "id": "songshi-wanganshi-002",
-    "title": "元日",
-    "dynasty": "宋",
-    "author": "王安石"
+    "id": "shijing-006",
+    "title": "木瓜",
+    "dynasty": "诗经",
+    "author": "诗经"
   }
 }
