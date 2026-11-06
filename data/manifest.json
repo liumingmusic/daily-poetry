@@ -1,12 +1,12 @@
 {
-  "date": "20261105",
-  "isoDate": "2026-11-05",
-  "index": 131,
+  "date": "20261106",
+  "isoDate": "2026-11-06",
+  "index": 147,
   "total": 169,
   "poem": {
-    "id": "shijing-009",
-    "title": "鹿鸣",
-    "dynasty": "诗经",
-    "author": "诗经"
+    "id": "prose-chushibiao",
+    "title": "出师表",
+    "dynasty": "其他",
+    "author": "诸葛亮"
   }
 }
