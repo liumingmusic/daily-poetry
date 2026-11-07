@@ -1,12 +1,12 @@
 {
-  "date": "20261106",
-  "isoDate": "2026-11-06",
-  "index": 147,
+  "date": "20261107",
+  "isoDate": "2026-11-07",
+  "index": 159,
   "total": 169,
   "poem": {
-    "id": "prose-chushibiao",
-    "title": "出师表",
+    "id": "prose-guofinlun",
+    "title": "过秦论（上）",
     "dynasty": "其他",
-    "author": "诸葛亮"
+    "author": "贾谊"
   }
 }
