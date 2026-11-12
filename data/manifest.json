@@ -1,12 +1,12 @@
 {
-  "date": "20261111",
-  "isoDate": "2026-11-11",
-  "index": 164,
+  "date": "20261112",
+  "isoDate": "2026-11-12",
+  "index": 36,
   "total": 169,
   "poem": {
-    "id": "prose-shengyu",
-    "title": "生于忧患，死于安乐",
-    "dynasty": "其他",
-    "author": "孟子"
+    "id": "tang-menghaoran-003",
+    "title": "过故人庄",
+    "dynasty": "唐",
+    "author": "孟浩然"
   }
 }
