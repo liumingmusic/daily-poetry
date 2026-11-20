@@ -1,12 +1,12 @@
 {
-  "date": "20261119",
-  "isoDate": "2026-11-19",
-  "index": 146,
+  "date": "20261120",
+  "isoDate": "2026-11-20",
+  "index": 10,
   "total": 169,
   "poem": {
-    "id": "other-chuci-001",
-    "title": "离骚（节选）",
-    "dynasty": "其他",
-    "author": "屈原"
+    "id": "tang-libai-011",
+    "title": "峨眉山月歌",
+    "dynasty": "唐",
+    "author": "李白"
   }
 }
